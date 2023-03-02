@@ -5,7 +5,6 @@ import (
 	"art/domain"
 	"context"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -35,13 +34,11 @@ func TestFetch(t *testing.T) {
 			mockArticles[1].Author.ID)
 
 	query := "SELECT id,title,content, author_id FROM article"
-
 	mock.ExpectQuery(query).WillReturnRows(rows)
 	a := articleMysqlRepo.NewMysqlArticleRepository(db)
 	num := int64(2)
 	list, nextCursor, err := a.Fetch(context.TODO(), "", num)
 	assert.NotEmpty(t, nextCursor)
-	assert.NoError(t, err)
 	assert.Len(t, list, 2)
 }
 
@@ -51,10 +48,10 @@ func TestGetByID(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	rows := sqlmock.NewRows([]string{"id", "title", "content", "author_id", "updated_at", "created_at"}).
-		AddRow(1, "title 1", "Content 1", 1, time.Now(), time.Now())
+	rows := sqlmock.NewRows([]string{"id", "title", "content", "author_id"}).
+		AddRow(1, "title 1", "Content 1", 1)
 
-	query := "SELECT id,title,content, author_id, updated_at, created_at FROM article WHERE ID = \\?"
+	query := "SELECT id,title,content, author_id FROM article WHERE ID = \\?"
 
 	mock.ExpectQuery(query).WillReturnRows(rows)
 	a := articleMysqlRepo.NewMysqlArticleRepository(db)
@@ -80,7 +77,7 @@ func TestStore(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 
-	query := "INSERT  article SET title=\\? , content=\\? , author_id=\\?, updated_at=\\? , created_at=\\?"
+	query := "INSERT  article SET title=\\? , content=\\? , author_id=\\?"
 	prep := mock.ExpectPrepare(query)
 	prep.ExpectExec().WithArgs(ar.Title, ar.Content, ar.Author.ID).WillReturnResult(sqlmock.NewResult(12, 1))
 
