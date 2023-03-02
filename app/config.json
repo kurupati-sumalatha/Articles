@@ -11,8 +11,7 @@
         "port": "3306",
         "user": "root",
         "pass": "Root@1234#",
-        "name": "article"
+        "name": "sakila"
     }
   
   }
-  

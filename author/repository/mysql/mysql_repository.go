@@ -4,6 +4,7 @@ import (
 	"art/domain"
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type mysqlAuthorRepo struct {
@@ -11,6 +12,7 @@ type mysqlAuthorRepo struct {
 }
 
 func NewMysqlAuthorRepository(db *sql.DB) domain.AuthorRepository {
+	fmt.Println(".................")
 	return &mysqlAuthorRepo{
 		DB: db,
 	}

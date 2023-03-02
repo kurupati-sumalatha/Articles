@@ -1,6 +1,10 @@
 package middleware
 
-import "github.com/labstack/echo"
+import (
+	"fmt"
+
+	"github.com/labstack/echo"
+)
 
 type GoMiddleware struct {
 	// another stuff , may be needed by middleware
@@ -16,5 +20,6 @@ func (m *GoMiddleware) CORS(next echo.HandlerFunc) echo.HandlerFunc {
 
 // InitMiddleware initialize the middleware
 func InitMiddleware() *GoMiddleware {
+	fmt.Println("=============")
 	return &GoMiddleware{}
 }
