@@ -58,7 +58,7 @@ func (m *mysqlArticleRepository) fetch(ctx context.Context, query string, args .
 
 func (m *mysqlArticleRepository) Fetch(ctx context.Context, cursor string, num int64) (res []domain.Article, nextCursor string, err error) {
 	query := `SELECT id,title,content, author_id
-  						FROM article`
+  						FROM articles`
 
 	decodedCursor, err := repository.DecodeCursor(cursor)
 	if err != nil && cursor != "" {
@@ -75,7 +75,7 @@ func (m *mysqlArticleRepository) Fetch(ctx context.Context, cursor string, num i
 
 func (m *mysqlArticleRepository) GetByTitle(ctx context.Context, title string) (res domain.Article, err error) {
 	query := `SELECT id,title,content, author_id
-  						FROM article WHERE title = ?`
+  						FROM articles WHERE title = ?`
 
 	list, err := m.fetch(ctx, query, title)
 	if err != nil {
@@ -92,7 +92,7 @@ func (m *mysqlArticleRepository) GetByTitle(ctx context.Context, title string) (
 
 func (m *mysqlArticleRepository) GetByID(ctx context.Context, id int64) (res domain.Article, err error) {
 	query := `SELECT id,title,content, author_id
-  						FROM article WHERE ID = ?`
+  						FROM articles WHERE ID = ?`
 
 	list, err := m.fetch(ctx, query, id)
 	if err != nil {
@@ -109,7 +109,7 @@ func (m *mysqlArticleRepository) GetByID(ctx context.Context, id int64) (res dom
 }
 
 func (m *mysqlArticleRepository) Store(ctx context.Context, a *domain.Article) (err error) {
-	query := `INSERT  article SET title=? , content=? , author_id=?`
+	query := `INSERT  articles SET title=? , content=? , author_id=?`
 	stmt, err := m.Conn.PrepareContext(ctx, query)
 	if err != nil {
 		return

@@ -6,9 +6,9 @@ import (
 	"art/article/usecase"
 	"art/author/repository/mysql"
 	"database/sql"
-	"fmt"
 	"log"
-	"net/url"
+
+	_ "github.com/go-sql-driver/mysql"
 
 	//"pkg/mod/github.com/spf13/viper@v1.8.0"
 	"art/article/delivery/http"
@@ -20,18 +20,20 @@ import (
 
 func init() {
 	viper.SetConfigFile(`config.json`)
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic(err)
-	}
-
 	if viper.GetBool(`debug`) {
 		log.Println("Service RUN on DEBUG mode")
 	}
 }
 
+var db *sql.DB
+
 func main() {
-	dbHost := viper.GetString(`database.host`)
+	db, err := sql.Open("mysql", "root:Root@1234#@tcp(127.0.0.1:3306)/sakila")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+	/*dbHost := viper.GetString(`database.host`)
 	dbPort := viper.GetString(`database.port`)
 	dbUser := viper.GetString(`database.user`)
 	dbPass := viper.GetString(`database.pass`)
@@ -57,12 +59,12 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
-
+	*/
 	e := echo.New()
 	middL := middleware.InitMiddleware()
 	e.Use(middL.CORS)
-	authorRepo := mysql.NewMysqlAuthorRepository(dbConn)
-	ar := repo.NewMysqlArticleRepository(dbConn)
+	authorRepo := mysql.NewMysqlAuthorRepository(db)
+	ar := repo.NewMysqlArticleRepository(db)
 
 	timeoutContext := time.Duration(viper.GetInt("context.timeout")) * time.Second
 	au := usecase.NewArticleUsecase(ar, authorRepo, timeoutContext)
